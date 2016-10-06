@@ -294,6 +294,7 @@ int main(int argc, char** argv) {
   std::string dynamic_model, fix_mode;
   int dr_limit;
   int ublox_version;
+  double freq_tolerance;
   ros::NodeHandle param_nh("~");
   param_nh.param("device", device, std::string("/dev/ttyACM0"));
   param_nh.param("frame_id", frame_id, std::string("gps"));
@@ -307,6 +308,7 @@ int main(int argc, char** argv) {
   param_nh.param("fix_mode", fix_mode, std::string("both"));
   param_nh.param("dr_limit", dr_limit, 0);
   param_nh.param("ublox_version", ublox_version, 6);
+  param_nh.param("freq_tolerance", freq_tolerance, 0.05);
 
   if (enable_ppp) {
     ROS_WARN("Warning: PPP is enabled - this is an expert setting.");
@@ -342,7 +344,7 @@ int main(int argc, char** argv) {
   double min_freq = target_freq;
   double max_freq = target_freq;
   diagnostic_updater::FrequencyStatusParam freq_param(&min_freq, &max_freq,
-                                                      0.05, 10);
+                                                      freq_tolerance, 10);
   diagnostic_updater::TimeStampStatusParam time_param(0,
                                                       meas_rate * 1e-3 * 0.05);
   freq_diag.reset(new diagnostic_updater::TopicDiagnostic(
